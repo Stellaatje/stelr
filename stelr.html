@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>STELR 🎀</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f7f8fc;
+        color: #17233f;
+        overscroll-behavior-x: none;
+    }
+
+    header {
+        background: #17233f;
+        color: white;
+        padding: 18px 20px;
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 30px;
+        letter-spacing: 1px;
+    }
+
+    header p {
+        margin: 4px 0 0;
+        opacity: 0.8;
+        font-size: 13px;
+    }
+
+    nav {
+        display: flex;
+        gap: 7px;
+        overflow-x: auto;
+        padding: 10px;
+        background: white;
+        border-bottom: 1px solid #e4e7ef;
+        position: sticky;
+        top: 79px;
+        z-index: 90;
+        scrollbar-width: none;
+    }
+
+    nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    nav button {
+        flex: 0 0 auto;
+        border: none;
+        background: #eef1f8;
+        color: #17233f;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    nav button.active {
+        background: #17233f;
+        color: white;
+    }
+
+    main {
+        max-width: 850px;
+        margin: auto;
+        padding: 18px;
+        padding-bottom: 40px;
+    }
+
+    section {
+        display: none;
+    }
+
+    section.active {
+        display: block;
+    }
+
+    .card {
+        background: white;
+        border-radius: 22px;
+        padding: 18px;
+        margin-bottom: 16px;
+        box-shadow: 0 5px 20px rgba(23,35,63,0.08);
+    }
+
+    h2 {
+        margin-top: 0;
+        color: #17233f;
+    }
+
+    h3 {
+        margin-bottom: 8px;
+    }
+
+    .pink {
+        background: #f4c5d9;
+    }
+
+    .blue {
+        background: #dce5f7;
+    }
+
+    button.primary {
+        border: none;
+        background: #17233f;
+        color: white;
+        padding: 13px 18px;
+        border-radius: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    button.secondary {
+        border: none;
+        background: #f4c5d9;
+        color: #17233f;
+        padding: 11px 15px;
+        border-radius: 12px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 13px;
+        margin: 6px 0 12px;
+        border: 2px solid #e2e5ee;
+        border-radius: 13px;
+        font-size: 16px;
+        background: white;
+    }
+
+    label {
+        font-weight: 800;
+        font-size: 14px;
+    }
+
+    /* CLOSET */
+
+    .clothes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 12px;
+    }
+
+    .clothing-card {
+        background: #f7f8fc;
+        border-radius: 18px;
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #e6e8ef;
+    }
+
+    .clothing-card .emoji {
+        font-size: 48px;
+        margin: 8px 0;
+    }
+
+    .clothing-card strong {
+        display: block;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 25px 10px;
+        color: #70778a;
+    }
+
+    /* BUILDER */
+
+    .builder-intro {
+        margin-bottom: 18px;
+    }
+
+    .builder-row {
+        background: white;
+        border-radius: 22px;
+        padding: 15px;
+        margin-bottom: 14px;
+        box-shadow: 0 5px 18px rgba(23,35,63,0.08);
+    }
+
+    .builder-row h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+    }
+
+    .swipe-area {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .arrow {
+        flex: 0 0 42px;
+        height: 42px;
+        border: none;
+        border-radius: 50%;
+        background: #17233f;
+        color: white;
+        font-size: 22px;
+        font-weight: bold;
+        cursor: pointer;
+        touch-action: manipulation;
+    }
+
+    .item-window {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        border-radius: 18px;
+    }
+
+    .item-track {
+        display: flex;
+        width: 100%;
+        transition: transform 0.22s ease;
+        touch-action: pan-y;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .builder-item {
+        min-width: 100%;
+        background: #f7f8fc;
+        border: 2px solid #e5e8f0;
+        border-radius: 18px;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .builder-item.selected {
+        border-color: #f4c5d9;
+        background: #fff0f6;
+    }
+
+    .builder-emoji {
+        font-size: 52px;
+        line-height: 1.1;
+        margin-bottom: 5px;
+    }
+
+    .builder-name {
+        font-weight: 800;
+        font-size: 16px;
+    }
+
+    .select-button {
+        margin-top: 10px;
+        border: none;
+        background: #f4c5d9;
+        color: #17233f;
+        padding: 9px 14px;
+        border-radius: 11px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .counter {
+        text-align: center;
+        font-size: 12px;
+        color: #7a8192;
+        margin-top: 7px;
+    }
+
+    .no-items {
+        background: #f2f4f8;
+        border-radius: 15px;
+        padding: 16px;
+        text-align: center;
+        color: #747b8b;
+        font-size: 14px;
+    }
+
+    /* MY FIT */
+
+    .fit-box {
+        background: #17233f;
+        color: white;
+        border-radius: 22px;
+        padding: 18px;
+        margin-top: 20px;
+    }
+
+    .fit-box h2 {
+        color: white;
+    }
+
+    .fit-list {
+        display: grid;
+        gap: 8px;
+    }
+
+    .fit-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255,255,255,0.1);
+        padding: 10px;
+        border-radius: 13px;
+    }
+
+    .fit-item span:first-child {
+        font-size: 26px;
+    }
+
+    /* WEATHER */
+
+    .weather-main {
+        font-size: 45px;
+        font-weight: 900;
+        margin: 8px 0;
+    }
+
+    .weather-details {
+        color: #596276;
+    }
+
+    .weather-outfit {
+        margin-top: 15px;
+        display: grid;
+        gap: 8px;
+    }
+
+    .weather-piece {
+        background: rgba(255,255,255,0.7);
+        padding: 10px;
+        border-radius: 13px;
+        font-weight: 700;
+    }
+
+    .tiny {
+        font-size: 12px;
+        color: #72798a;
+    }
+
+    @media (max-width: 600px) {
+        header h1 {
+            font-size: 27px;
+        }
+
+        main {
+            padding: 13px;
+        }
+
+        .builder-row {
+            padding: 12px;
+        }
+
+        .arrow {
+            flex-basis: 38px;
+            height: 38px;
+            font-size: 19px;
+        }
+
+        .builder-emoji {
+            font-size: 45px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>STELR 🎀</h1>
+    <p>your closet, your style</p>
+</header>
+
+<nav>
+    <button class="nav-btn active" data-section="home">🏠 Home</button>
+    <button class="nav-btn" data-section="closet">👗 Closet</button>
+    <button class="nav-btn" data-section="add">➕ Add item</button>
+    <button class="nav-btn" data-section="builder">✨ Build My Fit</button>
+    <button class="nav-btn" data-section="weather">☀️ Weather</button>
+</nav>
+
+<main>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+
+        <div class="card pink">
+            <h2>Hiii 💕</h2>
+            <p>Welcome to your STELR closet!</p>
+            <p>Mix & match your clothes and make cute outfits ✨</p>
+        </div>
+
+        <div class="card blue">
+            <h2>✨ Quick links</h2>
+
+            <button class="primary" onclick="showSection('builder')">
+                👗 Build My Fit
+            </button>
+
+            <br><br>
+
+            <button class="secondary" onclick="showSection('closet')">
+                👚 See my closet
+            </button>
+        </div>
+
+    </section>
+
+
+    <!-- CLOSET -->
+    <section id="closet">
+
+        <div class="card">
+            <h2>👗 My Closet</h2>
+
+            <button class="primary" onclick="showSection('add')">
+                + Add item
+            </button>
+        </div>
+
+        <div id="closetGrid" class="clothes-grid"></div>
+
+    </section>
+
+
+    <!-- ADD -->
+    <section id="add">
+
+        <div class="card">
+
+            <h2>➕ Add clothing</h2>
+
+            <label>Naam</label>
+            <input id="itemName" placeholder="bijv. blauwe hoodie">
+
+            <label>Categorie</label>
+
+            <select id="itemCategory">
+
+                <option value="jas">🧥 Jas</option>
+                <option value="top">👚 Top / trui</option>
+                <option value="bottom">👖 Broek / rok</option>
+                <option value="socks">🧦 Sokken</option>
+                <option value="shoes">👟 Schoenen</option>
+
+                <option value="dress">👗 Jurk</option>
+                <option value="accessory">🎀 Accessoire</option>
+
+            </select>
+
+            <label>Emoji</label>
+            <input id="itemEmoji" value="👚" maxlength="4">
+
+            <button class="primary" onclick="addClothing()">
+                💗 Add to closet
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- BUILDER -->
+    <section id="builder">
+
+        <div class="card builder-intro pink">
+
+            <h2>✨ Build My Fit</h2>
+
+            <p>
+                Swipe <b>links/rechts</b> per categorie 👆
+            </p>
+
+            <p class="tiny">
+                Alle categorieën blijven tegelijk zichtbaar!
+            </p>
+
+        </div>
+
+        <div id="builderRows"></div>
+
+        <div class="fit-box">
+
+            <h2>💗 My Fit</h2>
+
+            <div id="fitList" class="fit-list">
+                <p>Nog niets gekozen ✨</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- WEATHER -->
+    <section id="weather">
+
+        <div class="card blue">
+
+            <h2>☀️ Today's Weather</h2>
+
+            <button class="primary" onclick="getWeather()">
+                📍 Check weather
+            </button>
+
+            <div id="weatherResult"></div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+const CATEGORY_INFO = {
+
+    jas: {
+        name: "🧥 Jas",
+        key: "jas"
+    },
+
+    top: {
+        name: "👚 Top / trui",
+        key: "top"
+    },
+
+    bottom: {
+        name: "👖 Broek / rok",
+        key: "bottom"
+    },
+
+    socks: {
+        name: "🧦 Sokken",
+        key: "socks"
+    },
+
+    shoes: {
+        name: "👟 Schoenen",
+        key: "shoes"
+    }
+
+};
+
+
+let clothes = JSON.parse(
+    localStorage.getItem("stelrClothes") || "[]"
+);
+
+
+let builderIndexes = {
+    jas: 0,
+    top: 0,
+    bottom: 0,
+    socks: 0,
+    shoes: 0
+};
+
+
+let selectedFit = {};
+
+
+/* -------------------------
+   NAVIGATION
+------------------------- */
+
+function showSection(id) {
+
+    document.querySelectorAll("section")
+        .forEach(section => {
+            section.classList.remove("active");
+        });
+
+    document.getElementById(id)
+        .classList.add("active");
+
+
+    document.querySelectorAll(".nav-btn")
+        .forEach(button => {
+            button.classList.remove("active");
+        });
+
+
+    const navButton = document.querySelector(
+        `.nav-btn[data-section="${id}"]`
+    );
+
+    if (navButton) {
+        navButton.classList.add("active");
+    }
+
+
+    if (id === "closet") {
+        renderCloset();
+    }
+
+
+    if (id === "builder") {
+        renderBuilder();
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+/* -------------------------
+   ADD CLOTHING
+------------------------- */
+
+function addClothing() {
+
+    const name = document.getElementById("itemName")
+        .value.trim();
+
+    const category = document.getElementById("itemCategory")
+        .value;
+
+    const emoji = document.getElementById("itemEmoji")
+        .value.trim() || "👚";
+
+
+    if (!name) {
+        alert("Geef je kledingstuk eerst een naam 💕");
+        return;
+    }
+
+
+    const item = {
+        id: Date.now(),
+        name,
+        category,
+        emoji
+    };
+
+
+    clothes.push(item);
+
+    localStorage.setItem(
+        "stelrClothes",
+        JSON.stringify(clothes)
+    );
+
+
+    document.getElementById("itemName").value = "";
+
+    alert("Toegevoegd aan je closet! 🎀");
+
+    renderCloset();
+
+    showSection("closet");
+}
+
+
+/* -------------------------
+   CLOSET
+------------------------- */
+
+function renderCloset() {
+
+    const grid = document.getElementById("closetGrid");
+
+    if (clothes.length === 0) {
+
+        grid.innerHTML = `
+            <div class="card empty">
+                <div style="font-size:45px">👗</div>
+                <p>Je closet is nog leeg!</p>
+                <button class="secondary"
+                        onclick="showSection('add')">
+                    + Add your first item
+                </button>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    grid.innerHTML = clothes.map(item => {
+
+        const categoryName =
+            CATEGORY_INFO[item.category]?.name ||
+            "🎀 Accessoire";
+
+
+        return `
+            <div class="clothing-card">
+
+                <div class="emoji">
+                    ${item.emoji}
+                </div>
+
+                <strong>
+                    ${escapeHTML(item.name)}
+                </strong>
+
+                <div class="tiny">
+                    ${categoryName}
+                </div>
+
+                <br>
+
+                <button
+                    class="secondary"
+                    onclick="deleteClothing(${item.id})">
+                    🗑️
+                </button>
+
+            </div>
+        `;
+
+    }).join("");
+}
+
+
+function deleteClothing(id) {
+
+    clothes = clothes.filter(
+        item => item.id !== id
+    );
+
+
+    localStorage.setItem(
+        "stelrClothes",
+        JSON.stringify(clothes)
+    );
+
+
+    renderCloset();
+    renderBuilder();
+}
+
+
+/* -------------------------
+   BUILDER
+------------------------- */
+
+function getCategoryItems(category) {
+
+    return clothes.filter(
+        item => item.category === category
+    );
+}
+
+
+function renderBuilder() {
+
+    const container =
+        document.getElementById("builderRows");
+
+
+    container.innerHTML = "";
+
+
+    Object.keys(CATEGORY_INFO)
+        .forEach(category => {
+
+            const info = CATEGORY_INFO[category];
+
+            const items =
+                getCategoryItems(category);
+
+
+            if (items.length === 0) {
+
+                container.innerHTML += `
+
+                    <div class="builder-row">
+
+                        <h3>
+                            ${info.name}
+                        </h3>
+
+                        <div class="no-items">
+                            Nog geen ${info.name
+                                .replace(/^[^\s]+\s/, "")
+                                .toLowerCase()}
+                            toegevoegd 💕
+                            <br><br>
+
+                            <button
+                                class="secondary"
+                                onclick="showSection('add')">
+                                + Add item
+                            </button>
+                        </div>
+
+                    </div>
+
+                `;
+
+                return;
+            }
+
+
+            if (builderIndexes[category] >= items.length) {
+                builderIndexes[category] = 0;
+            }
+
+
+            const index =
+                builderIndexes[category];
+
+            const currentItem =
+                items[index];
+
+
+            const rowId =
+                `row-${category}`;
+
+
+            container.innerHTML += `
+
+                <div class="builder-row">
+
+                    <h3>
+                        ${info.name}
+                    </h3>
+
+                    <div class="swipe-area">
+
+                        <button
+                            class="arrow"
+                            onclick="moveBuilder('${category}', -1)">
+                            ‹
+                        </button>
+
+
+                        <div class="item-window">
+
+                            <div
+                                class="item-track"
+                                id="${rowId}"
+                                data-category="${category}">
+
+                                <div class="
+                                    builder-item
+                                    ${selectedFit[category] === currentItem.id
+                                        ? "selected"
+                                        : ""}
+                                ">
+
+                                    <div class="builder-emoji">
+                                        ${currentItem.emoji}
+                                    </div>
+
+                                    <div class="builder-name">
+                                        ${escapeHTML(currentItem.name)}
+                                    </div>
+
+                                    <button
+                                        class="select-button"
+                                        onclick="selectBuilderItem('${category}', ${currentItem.id})">
+
+                                        ${
+                                            selectedFit[category] === currentItem.id
+                                            ? "✓ Gekozen"
+                                            : "♡ Kies dit"
+                                        }
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            class="arrow"
+                            onclick="moveBuilder('${category}', 1)">
+                            ›
+                        </button>
+
+                    </div>
+
+
+                    <div class="counter">
+                        ${index + 1} / ${items.length}
+                    </div>
+
+                </div>
+            `;
+
+
+            setupSwipe(category);
+
+        });
+
+
+    renderFit();
+}
+
+
+/* -------------------------
+   BUILDER MOVEMENT
+------------------------- */
+
+function moveBuilder(category, direction) {
+
+    const items =
+        getCategoryItems(category);
+
+
+    if (items.length === 0) return;
+
+
+    let index =
+        builderIndexes[category] + direction;
+
+
+    if (index < 0) {
+        index = items.length - 1;
+    }
+
+
+    if (index >= items.length) {
+        index = 0;
+    }
+
+
+    builderIndexes[category] = index;
+
+
+    renderBuilder();
+}
+
+
+function selectBuilderItem(category, id) {
+
+    selectedFit[category] = id;
+
+    renderBuilder();
+}
+
+
+/* -------------------------
+   TOUCH SWIPE
+------------------------- */
+
+const touchStarts = {};
+
+
+function setupSwipe(category) {
+
+    const track =
+        document.getElementById(`row-${category}`);
+
+
+    if (!track) return;
+
+
+    track.addEventListener(
+        "touchstart",
+        function(event) {
+
+            if (!event.touches || !event.touches[0]) {
+                return;
+            }
+
+            touchStarts[category] =
+                event.touches[0].clientX;
+
+        },
+        { passive: true }
+    );
+
+
+    track.addEventListener(
+        "touchend",
+        function(event) {
+
+            if (!event.changedTouches ||
+                !event.changedTouches[0]) {
+                return;
+            }
+
+
+            const start =
+                touchStarts[category];
+
+            const end =
+                event.changedTouches[0].clientX;
+
+
+            if (start === undefined) {
+                return;
+            }
+
+
+            const distance =
+                end - start;
+
+
+            if (Math.abs(distance) < 35) {
+                return;
+            }
+
+
+            if (distance < 0) {
+                moveBuilder(category, 1);
+            } else {
+                moveBuilder(category, -1);
+            }
+
+
+            delete touchStarts[category];
+
+        },
+        { passive: true }
+    );
+}
+
+
+/* -------------------------
+   MY FIT
+------------------------- */
+
+function renderFit() {
+
+    const list =
+        document.getElementById("fitList");
+
+
+    const selectedCategories =
+        Object.keys(selectedFit)
+            .filter(category =>
+                selectedFit[category] !== undefined
+            );
+
+
+    if (selectedCategories.length === 0) {
+
+        list.innerHTML = `
+            <p>Nog niets gekozen ✨</p>
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        selectedCategories.map(category => {
+
+            const item =
+                clothes.find(
+                    clothing =>
+                        clothing.id === selectedFit[category]
+                );
+
+
+            if (!item) return "";
+
+
+            return `
+                <div class="fit-item">
+
+                    <span>
+                        ${item.emoji}
+                    </span>
+
+                    <div>
+                        <strong>
+                            ${escapeHTML(item.name)}
+                        </strong>
+
+                        <div class="tiny"
+                             style="color:#dfe5f4">
+                            ${CATEGORY_INFO[category]?.name || ""}
+                        </div>
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
+}
+
+
+/* -------------------------
+   WEATHER
+------------------------- */
+
+async function getWeather() {
+
+    const result =
+        document.getElementById("weatherResult");
+
+
+    result.innerHTML = `
+        <p>Even kijken naar het weer... ☁️</p>
+    `;
+
+
+    if (!navigator.geolocation) {
+
+        result.innerHTML = `
+            <p>Je browser ondersteunt geen locatie 😭</p>
+        `;
+
+        return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        async position => {
+
+            const lat =
+                position.coords.latitude;
+
+            const lon =
+                position.coords.longitude;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                const temperature =
+                    Math.round(
+                        data.current.temperature_2m
+                    );
+
+
+                const code =
+                    data.current.weather_code;
+
+
+                const weatherEmoji =
+                    getWeatherEmoji(code);
+
+
+                const suggestion =
+                    getWeatherOutfit(temperature);
+
+
+                result.innerHTML = `
+
+                    <div class="weather-main">
+                        ${weatherEmoji}
+                        ${temperature}°C
+                    </div>
+
+                    <div class="weather-details">
+                        Outfit suggestion for today:
+                    </div>
+
+                    <div class="weather-outfit">
+
+                        ${suggestion.map(item => `
+                            <div class="weather-piece">
+                                ${item}
+                            </div>
+                        `).join("")}
+
+                    </div>
+
+                `;
+
+            } catch (error) {
+
+                result.innerHTML = `
+                    <p>
+                        Oeps! Het weer kon niet geladen worden 😭
+                    </p>
+                `;
+
+            }
+
+        },
+
+        () => {
+
+            result.innerHTML = `
+                <p>
+                    Ik heb je locatie nodig om het weer te checken 📍
+                </p>
+            `;
+
+        }
+
+    );
+}
+
+
+function getWeatherEmoji(code) {
+
+    if (code === 0) return "☀️";
+
+    if ([1,2,3].includes(code)) return "🌤️";
+
+    if ([45,48].includes(code)) return "🌫️";
+
+    if ([51,53,55,56,57].includes(code)) return "🌦️";
+
+    if ([61,63,65,66,67].includes(code)) return "🌧️";
+
+    if ([71,73,75,77].includes(code)) return "❄️";
+
+    if ([80,81,82].includes(code)) return "🌧️";
+
+    if ([95,96,99].includes(code)) return "⛈️";
+
+    return "🌤️";
+}
+
+
+function getWeatherOutfit(temp) {
+
+    if (temp <= 5) {
+
+        return [
+            "🧥 Dikke jas",
+            "👚 Warme trui",
+            "👖 Lange broek",
+            "🧦 Warme sokken",
+            "👟 Dichte schoenen"
+        ];
+
+    }
+
+
+    if (temp <= 12) {
+
+        return [
+            "🧥 Jas",
+            "👚 Trui",
+            "👖 Lange broek",
+            "🧦 Sokken",
+            "👟 Sneakers"
+        ];
+
+    }
+
+
+    if (temp <= 18) {
+
+        return [
+            "🧥 Lichte jas",
+            "👚 Top / trui",
+            "👖 Broek of rok",
+            "🧦 Sokken",
+            "👟 Sneakers"
+        ];
+
+    }
+
+
+    if (temp <= 24) {
+
+        return [
+            "👚 Top",
+            "👖 Broek of rok",
+            "🧦 Sokken",
+            "👟 Sneakers"
+        ];
+
+    }
+
+
+    return [
+        "👚 Luchtige top",
+        "👖 Rok / korte broek",
+        "🧦 Dunne sokken",
+        "👟 Lichte schoenen"
+    ];
+}
+
+
+/* -------------------------
+   SAFETY FOR TEXT
+------------------------- */
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+/* -------------------------
+   STARTUP
+------------------------- */
+
+document.querySelectorAll(".nav-btn")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => showSection(button.dataset.section)
+        );
+
+    });
+
+
+renderCloset();
+
+</script>
+
+</body>
+</html>
