@@ -179,6 +179,43 @@
         display: block;
     }
 
+    .clothing-photo {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        border-radius: 14px;
+        background: white;
+        margin-bottom: 10px;
+    }
+
+    .clothing-placeholder {
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 70px;
+        background: white;
+        border-radius: 14px;
+        margin-bottom: 10px;
+    }
+
+    .image-input {
+        padding: 10px;
+        border: 2px dashed #e2e5ee;
+        border-radius: 13px;
+        background: #fafbfe;
+    }
+
+    .image-preview {
+        width: 100%;
+        max-height: 220px;
+        object-fit: contain;
+        border-radius: 16px;
+        background: #f7f8fc;
+        margin: 8px 0 14px;
+        display: none;
+    }
+
     .empty {
         text-align: center;
         padding: 25px 10px;
@@ -249,6 +286,26 @@
         text-align: center;
     }
 
+    .builder-photo {
+        width: 100%;
+        height: 230px;
+        object-fit: contain;
+        border-radius: 16px;
+        background: white;
+        margin-bottom: 8px;
+    }
+
+    .builder-placeholder {
+        height: 230px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 82px;
+        background: white;
+        border-radius: 16px;
+        margin-bottom: 8px;
+    }
+
     .builder-item.selected {
         border-color: #f4c5d9;
         background: #fff0f6;
@@ -308,20 +365,79 @@
 
     .fit-list {
         display: grid;
-        gap: 8px;
+        gap: 12px;
     }
 
     .fit-item {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 14px;
         background: rgba(255,255,255,0.1);
-        padding: 10px;
-        border-radius: 13px;
+        padding: 12px;
+        border-radius: 16px;
     }
 
     .fit-item span:first-child {
-        font-size: 26px;
+        font-size: 34px;
+    }
+
+    .fit-visual {
+        background: white;
+        color: #17233f;
+        border-radius: 20px;
+        padding: 18px;
+        margin-top: 16px;
+    }
+
+    .fit-visual-title {
+        text-align: center;
+        font-weight: 900;
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    .fit-outfit {
+        display: grid;
+        gap: 12px;
+        justify-items: center;
+    }
+
+    .fit-piece {
+        width: min(100%, 360px);
+        background: #f7f8fc;
+        border-radius: 18px;
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #e6e8ef;
+    }
+
+    .fit-piece img {
+        width: 100%;
+        height: 260px;
+        object-fit: contain;
+        border-radius: 14px;
+        background: white;
+    }
+
+    .fit-piece-placeholder {
+        height: 260px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 90px;
+        background: white;
+        border-radius: 14px;
+    }
+
+    .fit-piece-name {
+        font-weight: 900;
+        margin-top: 8px;
+    }
+
+    .fit-piece-category {
+        font-size: 12px;
+        color: #72798a;
+        margin-top: 3px;
     }
 
     /* WEATHER */
@@ -375,6 +491,16 @@
 
         .builder-emoji {
             font-size: 45px;
+        }
+
+        .builder-photo,
+        .builder-placeholder {
+            height: 190px;
+        }
+
+        .fit-piece img,
+        .fit-piece-placeholder {
+            height: 210px;
         }
     }
 </style>
@@ -467,6 +593,16 @@
             <label>Emoji</label>
             <input id="itemEmoji" value="👚" maxlength="4">
 
+            <label>Foto van je kledingstuk 📸</label>
+            <input
+                id="itemImage"
+                class="image-input"
+                type="file"
+                accept="image/*"
+                onchange="previewImage(event)"
+            >
+            <img id="imagePreview" class="image-preview" alt="Voorbeeld van je kledingstuk">
+
             <button class="primary" onclick="addClothing()">
                 💗 Add to closet
             </button>
@@ -484,11 +620,11 @@
             <h2>✨ Build My Fit</h2>
 
             <p>
-                Swipe <b>links/rechts</b> per categorie 👆
+                Kies je kleding en zie je outfit groot terug 👆
             </p>
 
             <p class="tiny">
-                Alle categorieën blijven tegelijk zichtbaar!
+                Je outfit wordt hieronder groot opgebouwd ✨
             </p>
 
         </div>
@@ -627,6 +763,30 @@ function showSection(id) {
    ADD CLOTHING
 ------------------------- */
 
+let pendingImage = "";
+
+function previewImage(event) {
+    const file = event.target.files?.[0];
+    const preview = document.getElementById("imagePreview");
+
+    if (!file) {
+        pendingImage = "";
+        preview.style.display = "none";
+        preview.removeAttribute("src");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function() {
+        pendingImage = reader.result;
+        preview.src = reader.result;
+        preview.style.display = "block";
+    };
+
+    reader.readAsDataURL(file);
+}
+
 function addClothing() {
 
     const name = document.getElementById("itemName")
@@ -649,7 +809,8 @@ function addClothing() {
         id: Date.now(),
         name,
         category,
-        emoji
+        emoji,
+        image: pendingImage || ""
     };
 
 
@@ -662,6 +823,10 @@ function addClothing() {
 
 
     document.getElementById("itemName").value = "";
+    document.getElementById("itemImage").value = "";
+    document.getElementById("imagePreview").style.display = "none";
+    document.getElementById("imagePreview").removeAttribute("src");
+    pendingImage = "";
 
     alert("Toegevoegd aan je closet! 🎀");
 
@@ -860,9 +1025,11 @@ function renderBuilder() {
                                         : ""}
                                 ">
 
-                                    <div class="builder-emoji">
-                                        ${currentItem.emoji}
-                                    </div>
+                                    ${
+                                        currentItem.image
+                                        ? `<img class="builder-photo" src="${currentItem.image}" alt="${escapeHTML(currentItem.name)}">`
+                                        : `<div class="builder-placeholder">${currentItem.emoji}</div>`
+                                    }
 
                                     <div class="builder-name">
                                         ${escapeHTML(currentItem.name)}
@@ -1042,13 +1209,11 @@ function renderFit() {
     const list =
         document.getElementById("fitList");
 
-
     const selectedCategories =
         Object.keys(selectedFit)
             .filter(category =>
                 selectedFit[category] !== undefined
             );
-
 
     if (selectedCategories.length === 0) {
 
@@ -1059,44 +1224,54 @@ function renderFit() {
         return;
     }
 
+    const order = ["jas", "top", "bottom", "socks", "shoes"];
 
-    list.innerHTML =
-        selectedCategories.map(category => {
+    const orderedSelected = order
+        .filter(category => selectedCategories.includes(category));
 
-            const item =
-                clothes.find(
-                    clothing =>
-                        clothing.id === selectedFit[category]
-                );
+    const pieces = orderedSelected.map(category => {
 
+        const item =
+            clothes.find(
+                clothing =>
+                    clothing.id === selectedFit[category]
+            );
 
-            if (!item) return "";
+        if (!item) return "";
 
+        return `
+            <div class="fit-piece">
 
-            return `
-                <div class="fit-item">
+                ${
+                    item.image
+                    ? `<img src="${item.image}" alt="${escapeHTML(item.name)}">`
+                    : `<div class="fit-piece-placeholder">${item.emoji}</div>`
+                }
 
-                    <span>
-                        ${item.emoji}
-                    </span>
-
-                    <div>
-                        <strong>
-                            ${escapeHTML(item.name)}
-                        </strong>
-
-                        <div class="tiny"
-                             style="color:#dfe5f4">
-                            ${CATEGORY_INFO[category]?.name || ""}
-                        </div>
-                    </div>
-
+                <div class="fit-piece-name">
+                    ${escapeHTML(item.name)}
                 </div>
-            `;
 
-        }).join("");
+                <div class="fit-piece-category">
+                    ${CATEGORY_INFO[category]?.name || "🎀 Accessoire"}
+                </div>
+
+            </div>
+        `;
+    }).join("");
+
+    list.innerHTML = `
+        <div class="fit-visual">
+            <div class="fit-visual-title">
+                ✨ Jouw outfit
+            </div>
+
+            <div class="fit-outfit">
+                ${pieces}
+            </div>
+        </div>
+    `;
 }
-
 
 /* -------------------------
    WEATHER
